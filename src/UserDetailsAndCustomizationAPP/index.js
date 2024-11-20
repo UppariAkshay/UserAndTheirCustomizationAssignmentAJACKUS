@@ -1,6 +1,4 @@
 import {Component} from 'react'
-import Popup from 'reactjs-popup'
-import Modal from 'react-modal'
 import 'reactjs-popup/dist/index.css'
 import './index.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -73,6 +71,8 @@ class UserDetailsAndCustomizationAPP extends Component
 
         const response = await fetch(deleteUserUrl, options)
         const responseInJson = await response.json() // on DELETE request api gives empty object as deleted 
+
+        console.log(responseInJson) // gives []
 
         this.setState(prevState => ({
             allUser: prevState.allUser.filter(eachUser => eachUser.id !== userId) // this will update our state and delete the user
