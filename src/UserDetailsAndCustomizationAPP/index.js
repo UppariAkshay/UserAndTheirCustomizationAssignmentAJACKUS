@@ -19,6 +19,21 @@ class UserDetailsAndCustomizationAPP extends Component
         this.setState({allUser: responseInJson})
     }
 
+    // this method will make a DELETE user by accessing the userID from arguments
+    deleteUser = async userId => {
+        const deleteUserUrl = `https://jsonplaceholder.typicode.com/users/${userId}`
+        const options = {
+            method: 'DELETE',
+        }
+
+        const response = await fetch(deleteUserUrl, options)
+        const responseInJson = await response.json() // on DELETE request api gives empty object as deleted 
+
+        this.setState(prevState => ({
+            allUser: prevState.allUser.filter(eachUser => eachUser.id !== userId) // this will update our state and delete the user
+        }))
+    }
+
     displayUserInTableRow = userData => {
         return (
             <tr>
@@ -30,6 +45,9 @@ class UserDetailsAndCustomizationAPP extends Component
                 <td>{userData.company.name}</td>
                 <td>{userData.website}</td>
                 <td><button className='btn btn-dark'>Edit</button></td>
+
+                {/* onClicking this delete button, we send ID as paramter for call back function deleteUser() for reference for DELETE requset to delete specific user */}
+                <td><button onClick={() => this.deleteUser(userData.id)} className='btn btn-danger'>Delete</button></td>
             </tr>
         )
     }
@@ -125,7 +143,7 @@ class UserDetailsAndCustomizationAPP extends Component
                     <button type='submit' class='btn btn-success'>ADD</button>
                 </form>
 
-                
+
                 <table class="table table-striped">
                     <thead>
                         <tr>
