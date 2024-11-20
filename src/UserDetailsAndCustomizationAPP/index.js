@@ -7,32 +7,32 @@ class UserDetailsAndCustomizationAPP extends Component
 {
     state = {allUser: []}
 
-    // componentDidMount()
-    // {
-    //     this.fetchAllUsers() // calling this method to get all users using fetching
-    // }
+    componentDidMount()
+    {
+        this.fetchAllUsers() // calling this method to get all users using fetching
+    }
 
-    // fetchAllUsers = async () => {
-    //     const response = await fetch('https://jsonplaceholder.typicode.com/users')
-    //     const responseInJson = await response.json()
+    fetchAllUsers = async () => {
+        const response = await fetch('https://jsonplaceholder.typicode.com/users')
+        const responseInJson = await response.json()
 
-    //     this.setState({allUser: responseInJson})
-    // }
+        this.setState({allUser: responseInJson})
+    }
 
-    // displayUserInTableRow = userData => {
-    //     return (
-    //         <tr>
-    //             <td>{userData.name}</td>
-    //             <td>{userData.username}</td>
-    //             <td>{userData.phone}</td>
-    //             <td>{userData.email}</td>
-    //             <td>{userData.addrerss}</td>
-    //             <td>{userData.company.name}</td>
-    //             <td>{userData.website}</td>
-    //             <td><button className='btn btn-dark'>Edit</button></td>
-    //         </tr>
-    //     )
-    // }
+    displayUserInTableRow = userData => {
+        return (
+            <tr>
+                <td>{userData.name}</td>
+                <td>{userData.username}</td>
+                <td>{userData.phone}</td>
+                <td>{userData.email}</td>
+                <td>{userData.addrerss}</td>
+                <td>{userData.company.name}</td>
+                <td>{userData.website}</td>
+                <td><button className='btn btn-dark'>Edit</button></td>
+            </tr>
+        )
+    }
 
     render()
     {
@@ -54,11 +54,11 @@ class UserDetailsAndCustomizationAPP extends Component
                         <th scope="col">Action</th>
                         </tr>
                     </thead>
-                    {/* <tbody>
+                    <tbody>
                         {
                             allUser.map(eachUser => this.displayUserInTableRow(eachUser)) // Iterating all users display each user in table row
                         }
-                    </tbody> */}
+                    </tbody>
                 </table>
             </div>
             
