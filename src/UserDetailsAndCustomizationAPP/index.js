@@ -1,11 +1,14 @@
 import {Component} from 'react'
+import Popup from 'reactjs-popup'
+import Modal from 'react-modal'
+import 'reactjs-popup/dist/index.css'
 import './index.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 
 class UserDetailsAndCustomizationAPP extends Component
 {
-    state = {allUser: [], newUser: {}}
+    state = {allUser: [], newUser: {}, editId: ''}
 
     componentDidMount()
     {
@@ -17,6 +20,48 @@ class UserDetailsAndCustomizationAPP extends Component
         const responseInJson = await response.json()
 
         this.setState({allUser: responseInJson})
+    }
+
+    onChangeEditName = (eventObj, userId) => {
+        this.setState(prevState => ({
+            allUser: prevState.allUser.map(eachUser => eachUser.id === userId ? {...eachUser, name: eventObj.target.value} : eachUser)
+        }))
+    }
+
+    onChangeEditUserName = (eventObj, userId) => {
+        this.setState(prevState => ({
+            allUser: prevState.allUser.map(eachUser => eachUser.id === userId ? {...eachUser, username: eventObj.target.value} : eachUser)
+        }))
+    }
+
+    onChangeEditphone = (eventObj, userId) => {
+        this.setState(prevState => ({
+            allUser: prevState.allUser.map(eachUser => eachUser.id === userId ? {...eachUser, phone: eventObj.target.value} : eachUser)
+        }))
+    }
+
+    onChangeEditEmail = (eventObj, userId) => {
+        this.setState(prevState => ({
+            allUser: prevState.allUser.map(eachUser => eachUser.id === userId ? {...eachUser, email: eventObj.target.value} : eachUser)
+        }))
+    }
+
+    onChangeEditAddress = (eventObj, userId) => {
+        this.setState(prevState => ({
+            allUser: prevState.allUser.map(eachUser => eachUser.id === userId ? {...eachUser, address: {city: eventObj.target.value}} : eachUser)
+        }))
+    }
+
+    onChangeEditCompany = (eventObj, userId) => {
+        this.setState(prevState => ({
+            allUser: prevState.allUser.map(eachUser => eachUser.id === userId ? {...eachUser, company: {name: eventObj.target.value}} : eachUser)
+        }))
+    }
+
+    onChangeEditWebsite = (eventObj, userId) => {
+        this.setState(prevState => ({
+            allUser: prevState.allUser.map(eachUser => eachUser.id === userId ? {...eachUser, website: eventObj.target.value} : eachUser)
+        }))
     }
 
     // this method will make a DELETE user by accessing the userID from arguments
@@ -34,22 +79,75 @@ class UserDetailsAndCustomizationAPP extends Component
         }))
     }
 
-    displayUserInTableRow = userData => {
-        return (
-            <tr>
-                <td>{userData.name}</td>
-                <td>{userData.username}</td>
-                <td>{userData.phone}</td>
-                <td>{userData.email}</td>
-                <td>{userData.address.city}</td>
-                <td>{userData.company.name}</td>
-                <td>{userData.website}</td>
-                <td><button className='btn btn-dark'>Edit</button></td>
+    // updating state that there is a user looking to update changes
+    onClickEdit = (userID) => {
+        this.setState({editId: userID})
+    }
 
-                {/* onClicking this delete button, we send ID as paramter for call back function deleteUser() for reference for DELETE requset to delete specific user */}
-                <td><button onClick={() => this.deleteUser(userData.id)} className='btn btn-danger'>Delete</button></td>
-            </tr>
-        )
+    // updating the FORMAT into DISPLAY FORMAT and fetching for a PUT request
+    onCLickUpdate = async userId => {
+        const {allUser} = this.state
+        const userObjToUpdate = allUser.map(eachUser => eachUser.id === userId)
+
+        const updateUserUrl = `https://jsonplaceholder.typicode.com/users/${userId}`
+        const options = {
+            method: 'PUT',
+            body: JSON.stringify(userObjToUpdate),
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+            }
+        }
+
+        const response = await fetch(updateUserUrl, options)
+        const responseInJson = await response.json()
+
+        console.log(responseInJson)
+        this.setState({editId: ''})
+    }
+
+
+    // this function will render the use data in the table, either in EDIT FORMAT or DISPLAY FORMAT 
+    displayUserInTableRow = userData => {
+        const {editId} = this.state
+
+        // displays users in DISPLAY FORMAT
+        const displayActualFormat = () => {
+            return (
+                <tr>
+                    <td>{userData.name}</td>
+                    <td>{userData.username}</td>
+                    <td>{userData.phone}</td>
+                    <td>{userData.email}</td>
+                    <td>{userData.address.city}</td>
+                    <td>{userData.company.name}</td>
+                    <td>{userData.website}</td>
+
+                    {/* onclicking edit button,  changing state that there is a user to update and holding that user value in state by passing user id as argument */}
+                    <td><button onClick={ () => this.onClickEdit(userData.id)} className='btn btn-dark' >Edit</button></td>
+                    <td><button onClick={() => this.deleteUser(userData.id)} className='btn btn-danger'>Delete</button></td>
+                </tr>
+            )
+        }
+
+        // displays user in EDIT FORMAT
+        const displayEditFormat = () => {
+            return (
+                <tr className='container editUserDetailsContainerDIV'>
+                    <td><input onChange={(eventObj) => this.onChangeEditName(eventObj,userData.id)} class="form-control" value={userData.name} /></td>
+                    <td><input onChange={(eventObj) => this.onChangeEditUserName(eventObj,userData.id)} class="form-control" value={userData.username} /></td>
+                    <td><input onChange={(eventObj) => this.onChangeEditphone(eventObj,userData.id)} class="form-control" value={userData.phone} /></td>
+                    <td><input onChange={(eventObj) => this.onChangeEditEmail(eventObj,userData.id)} class="form-control" value={userData.email} /></td>
+                    <td><input onChange={(eventObj) => this.onChangeEditCompany(eventObj,userData.id)} class="form-control" value={userData.company.name} /></td>
+                    <td><input onChange={(eventObj) => this.onChangeEditAddress(eventObj,userData.id)} class="form-control" value={userData.address.city} /></td>
+                    <td><input onChange={(eventObj) => this.onChangeEditWebsite(eventObj,userData.id)} class="form-control" value={userData.website} /></td>
+                    <td><button onClick={ () => this.onCLickUpdate(userData.id)} className='btn btn-warning'>Update</button></td>
+                </tr>
+            )
+
+        }
+
+        return editId === userData.id ? displayEditFormat() : displayActualFormat() // checking if to display in EDIT FORMAT or DISPLAY FORMAT by compring with editID from state
+
     }
 
     onChangeName = event => {
