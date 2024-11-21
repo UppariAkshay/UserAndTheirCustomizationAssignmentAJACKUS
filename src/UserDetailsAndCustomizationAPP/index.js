@@ -1,6 +1,6 @@
 import {Component} from 'react'
 import './index.css'
-
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 
 class UserDetailsAndCustomizationAPP extends Component
